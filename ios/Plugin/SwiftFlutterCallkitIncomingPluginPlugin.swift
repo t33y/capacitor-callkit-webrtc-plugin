@@ -27,7 +27,7 @@ enum PushNotificationsPermissions: String {
 @available(iOS 10.0, *) 
 @objc(SwiftFlutterCallkitIncomingPluginPlugin)
 public class SwiftFlutterCallkitIncomingPluginPlugin: CAPPlugin, CAPBridgedPlugin, CXProviderDelegate, WebRTCClientDelegate {
-public let identifier = "SwiftFlutterCallkitIncomingPlugin"
+public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
     public let jsName = "FlutterCallkitIncoming"
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name:"createPeer", returnType: CAPPluginReturnPromise ),

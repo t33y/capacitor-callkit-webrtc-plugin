@@ -1,15 +1,13 @@
 import { registerPlugin } from '@capacitor/core';
 
-import type { SwiftFlutterCallkitIncomingPluginPlugin } from './definitions';
+import type { FlutterCallkitIncomingPlugin } from './definitions';
 
-const SwiftFlutterCallkitIncomingPlugin =
-  registerPlugin<SwiftFlutterCallkitIncomingPluginPlugin>(
-    'SwiftFlutterCallkitIncomingPlugin',
-    {
-      web: () =>
-        import('./web').then(m => new m.SwiftFlutterCallkitIncomingPluginWeb()),
-    },
-  );
+const FlutterCallkitIncoming = registerPlugin<FlutterCallkitIncomingPlugin>(
+  'FlutterCallkitIncoming',
+  {
+    web: () => import('./web').then(m => new m.FlutterCallkitIncomingWeb()),
+  },
+);
 
 export * from './definitions';
-export { SwiftFlutterCallkitIncomingPlugin };
+export { FlutterCallkitIncoming };
