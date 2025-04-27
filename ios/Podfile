@@ -9,6 +9,7 @@ end
 
 target 'Plugin' do
   capacitor_pods
+  pod 'WebRTC', :path => './Frameworks/WebRTC.podspec'
 end
 
 target 'PluginTests' do
