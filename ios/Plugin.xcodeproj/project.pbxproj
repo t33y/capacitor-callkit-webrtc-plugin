@@ -3,13 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		03FC29A292ACC40490383A1F /* Pods_Plugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B2A61DA5A1F2DD4F959604D /* Pods_Plugin.framework */; };
 		20C0B05DCFC8E3958A738AF2 /* Pods_PluginTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F6753A823D3815DB436415E3 /* Pods_PluginTests.framework */; };
 		2F98D68224C9AAE500613A4C /* SwiftFlutterCallkitIncomingPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F98D68124C9AAE400613A4C /* SwiftFlutterCallkitIncomingPlugin.swift */; };
+		338EC4462DBF37BE006ECA0B /* WebRTC.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 338EC4442DBF37B5006ECA0B /* WebRTC.xcframework */; };
+		338EC4472DBF37BE006ECA0B /* WebRTC.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 338EC4442DBF37B5006ECA0B /* WebRTC.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		50ADFF92201F53D600D50D53 /* Plugin.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 50ADFF88201F53D600D50D53 /* Plugin.framework */; };
 		50ADFF97201F53D600D50D53 /* SwiftFlutterCallkitIncomingPluginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ADFF96201F53D600D50D53 /* SwiftFlutterCallkitIncomingPluginTests.swift */; };
 		50ADFF99201F53D600D50D53 /* SwiftFlutterCallkitIncomingPluginPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 50ADFF8B201F53D600D50D53 /* SwiftFlutterCallkitIncomingPluginPlugin.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -28,8 +30,23 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		338EC4482DBF37BE006ECA0B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				338EC4472DBF37BE006ECA0B /* WebRTC.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		2F98D68124C9AAE400613A4C /* SwiftFlutterCallkitIncomingPlugin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftFlutterCallkitIncomingPlugin.swift; sourceTree = "<group>"; };
+		338EC4442DBF37B5006ECA0B /* WebRTC.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WebRTC.xcframework; path = Frameworks/WebRTC.xcframework; sourceTree = "<group>"; };
 		3B2A61DA5A1F2DD4F959604D /* Pods_Plugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Plugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50ADFF88201F53D600D50D53 /* Plugin.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Plugin.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50ADFF8B201F53D600D50D53 /* SwiftFlutterCallkitIncomingPluginPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftFlutterCallkitIncomingPluginPlugin.h; sourceTree = "<group>"; };
@@ -54,6 +71,7 @@
 			files = (
 				50ADFFA42020D75100D50D53 /* Capacitor.framework in Frameworks */,
 				03FC29A292ACC40490383A1F /* Pods_Plugin.framework in Frameworks */,
+				338EC4462DBF37BE006ECA0B /* WebRTC.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,6 +142,7 @@
 		A797B9EFA3DCEFEA1FBB66A9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				338EC4442DBF37B5006ECA0B /* WebRTC.xcframework */,
 				50ADFFA52020D75100D50D53 /* Capacitor.framework */,
 				3B2A61DA5A1F2DD4F959604D /* Pods_Plugin.framework */,
 				F6753A823D3815DB436415E3 /* Pods_PluginTests.framework */,
@@ -154,6 +173,7 @@
 				50ADFF84201F53D600D50D53 /* Frameworks */,
 				50ADFF85201F53D600D50D53 /* Headers */,
 				50ADFF86201F53D600D50D53 /* Resources */,
+				338EC4482DBF37BE006ECA0B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -449,7 +469,8 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -470,7 +491,12 @@
 				INFOPLIST_FILE = Plugin/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(FRAMEWORK_SEARCH_PATHS)\n$(FRAMEWORK_SEARCH_PATHS)\n$(FRAMEWORK_SEARCH_PATHS)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+					"$(FRAMEWORK_SEARCH_PATHS)\n$(FRAMEWORK_SEARCH_PATHS)\n$(FRAMEWORK_SEARCH_PATHS)",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.getcapacitor.Plugin;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -496,7 +522,12 @@
 				INFOPLIST_FILE = Plugin/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(FRAMEWORK_SEARCH_PATHS)";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+					"$(FRAMEWORK_SEARCH_PATHS)",
+				);
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.getcapacitor.Plugin;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -513,7 +544,11 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = PluginTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.getcapacitor.PluginTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -527,7 +562,11 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = PluginTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.getcapacitor.PluginTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
