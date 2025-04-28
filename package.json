@@ -9,6 +9,7 @@
   "files": [
     "android/src/main/",
     "android/build.gradle",
+    "ios/Frameworks/",
     "dist/",
     "ios/Plugin/",
     "CapacitorCallkitWebrtcPlugin.podspec"
