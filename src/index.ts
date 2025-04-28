@@ -3,7 +3,7 @@ import { registerPlugin } from '@capacitor/core';
 import type { FlutterCallkitIncomingPlugin } from './definitions';
 
 const FlutterCallkitIncoming = registerPlugin<FlutterCallkitIncomingPlugin>(
-  'FlutterCallkitIncomingWebrtc',
+  'FlutterCallkitIncoming',
   {
     web: () => import('./web').then(m => new m.FlutterCallkitIncomingWeb()),
   },

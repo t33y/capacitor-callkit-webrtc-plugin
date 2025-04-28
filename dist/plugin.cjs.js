@@ -12,7 +12,7 @@ exports.SdpType = void 0;
     SdpType["rollback"] = "rollback";
 })(exports.SdpType || (exports.SdpType = {}));
 
-const FlutterCallkitIncoming = core.registerPlugin('FlutterCallkitIncomingWebrtc', {
+const FlutterCallkitIncoming = core.registerPlugin('FlutterCallkitIncoming', {
     web: () => Promise.resolve().then(function () { return web; }).then(m => new m.FlutterCallkitIncomingWeb()),
 });
 

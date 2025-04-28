@@ -73,7 +73,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
     static let ACTION_CALL_TOGGLE_GROUP = "com.hiennv.flutter_callkit_incoming.ACTION_CALL_TOGGLE_GROUP"
     static let ACTION_CALL_TOGGLE_AUDIO_SESSION = "com.hiennv.flutter_callkit_incoming.ACTION_CALL_TOGGLE_AUDIO_SESSION"
     
-    @objc public private(set) static var sharedInstance: SwiftFlutterCallkitIncomingPlugin!
+    @objc public private(set) static var sharedInstance: SwiftFlutterCallkitIncomingPluginPlugin!
     
     private var callManager: CallManager
     private var webRTCManager: NativeWebrtcManager?
@@ -161,11 +161,11 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
                 self.notifyListeners(event, data: body ?? [:])
             } 
            else {
-               if (event == SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ACCEPT) {
+               if (event == SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_ACCEPT) {
                    lastAcceptCallEvent = body
-               } else if (event == SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_INCOMING) {
+               } else if (event == SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_INCOMING) {
                    lastIncomingCallEvent = body
-               } else if (event == SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ENDED) {
+               } else if (event == SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_ENDED) {
                    lastEndCallEvent = body
                }
            }
@@ -177,14 +177,14 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
         self.notifyListeners(event, data: body ?? [:])
     }
     
-    public static func sharePluginWithRegister(with pluginInstance: SwiftFlutterCallkitIncomingPlugin) {
+    public static func sharePluginWithRegister(with pluginInstance: SwiftFlutterCallkitIncomingPluginPlugin) {
         if(sharedInstance == nil){
             sharedInstance = pluginInstance
         }
     }
     
     override public func load() {
-        SwiftFlutterCallkitIncomingPlugin.sharePluginWithRegister(with: self)
+        SwiftFlutterCallkitIncomingPluginPlugin.sharePluginWithRegister(with: self)
 
         self.bridge?.notificationRouter.pushNotificationHandler = self.notificationDelegateHandler
         self.notificationDelegateHandler.plugin = self
@@ -799,7 +799,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
     
     @objc public func setDevicePushTokenVoIP(_ deviceToken: String) {
         UserDefaults.standard.set(deviceToken, forKey: devicePushTokenVoIP)
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP, ["deviceTokenVoIP":deviceToken])
+        self.sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_DID_UPDATE_DEVICE_PUSH_TOKEN_VOIP, ["deviceTokenVoIP":deviceToken])
     }
     
     @objc public func getDevicePushTokenVoIP() -> String {
@@ -824,15 +824,15 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
     
     @objc public func sendPendingAcceptEvent() {
         if (lastIncomingCallEvent != nil) {
-            sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_INCOMING, lastIncomingCallEvent)
+            sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_INCOMING, lastIncomingCallEvent)
             lastIncomingCallEvent = nil
         }
         if (lastAcceptCallEvent != nil) {
-            sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ACCEPT, lastAcceptCallEvent)
+            sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_ACCEPT, lastAcceptCallEvent)
             lastAcceptCallEvent = nil
         }
         if (lastEndCallEvent != nil) {
-            sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ENDED, lastEndCallEvent)
+            sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_ENDED, lastEndCallEvent)
             lastEndCallEvent = nil
         }
     }
@@ -866,7 +866,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
                 let call = Call(uuid: uuid!, data: data)
                 call.handle = data.handle
                 self.callManager.addCall(call)
-                self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_INCOMING, data.toJSON())
+                self.sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_INCOMING, data.toJSON())
                 self.endCallNotExist(data)
             }
         }
@@ -932,7 +932,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
         if(self.isFromPushKit){
             call = Call(uuid: UUID(uuidString: self.data!.uuid)!, data: data)
             self.isFromPushKit = false
-            self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ENDED, data.toJSON())
+            self.sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_ENDED, data.toJSON())
         }else {
             call = Call(uuid: UUID(uuidString: data.uuid)!, data: data)
         }
@@ -1007,7 +1007,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
         guard let call = self.callManager.callWithUUID(uuid: UUID(uuidString: data.uuid)!) else {
             return
         }
-        sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TIMEOUT, data.toJSON())
+        sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_TIMEOUT, data.toJSON())
         if let appDelegate = UIApplication.shared.delegate as? CallkitIncomingAppDelegate {
             appDelegate.onTimeOut(call)
         }
@@ -1146,7 +1146,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
         }
         self.outgoingCall = call;
         self.callManager.addCall(call)
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_START, self.data?.toJSON())
+        self.sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_START, self.data?.toJSON())
         action.fulfill()
     }
     
@@ -1165,7 +1165,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
             self?.sharedProvider?.reportOutgoingCall(with: call.uuid, connectedAt: call.connectedData)
         }
         self.answerCall = call
-        sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ACCEPT, self.data?.toJSON())
+        sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_ACCEPT, self.data?.toJSON())
         if let appDelegate = UIApplication.shared.delegate as? CallkitIncomingAppDelegate {
             appDelegate.onAccept(call, action)
         }else {
@@ -1176,14 +1176,14 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
     public func onEndCall(hasCall: Bool, hasOutgoingCall: Bool, hasAnswerCall: Bool, data: CallData?) {
         if (hasCall == false) {
             if(hasAnswerCall == false && hasOutgoingCall == false){
-                sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TIMEOUT, data?.toJSON())
+                sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_TIMEOUT, data?.toJSON())
             } else {
-                sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ENDED, data?.toJSON())
+                sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_ENDED, data?.toJSON())
             }
             return
         }
         if (hasAnswerCall == false && hasOutgoingCall == false) {
-            sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_DECLINE, data?.toJSON())
+            sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_DECLINE, data?.toJSON())
             var url = data?.extra["callResponseUrl"] as? String
             let declineBody = data?.extra["declineBody"] as? String
             let sessionToken = data?.extra["sessionToken"] as? String
@@ -1194,7 +1194,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
                 postRequest(url!, declineBody)
             }
         }else {
-            sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ENDED, data?.toJSON())
+            sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_ENDED, data?.toJSON())
         }
         self.webRTCManager?.close()
     }
@@ -1252,7 +1252,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
             action.fail()
             return
         }
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TOGGLE_GROUP, [ "id": action.callUUID.uuidString, "callUUIDToGroupWith" : action.callUUIDToGroupWith?.uuidString])
+        self.sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_TOGGLE_GROUP, [ "id": action.callUUID.uuidString, "callUUIDToGroupWith" : action.callUUIDToGroupWith?.uuidString])
         action.fulfill()
     }
     
@@ -1261,7 +1261,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
             action.fail()
             return
         }
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TOGGLE_DMTF, [ "id": action.callUUID.uuidString, "digits": action.digits, "type": action.type ])
+        self.sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_TOGGLE_DMTF, [ "id": action.callUUID.uuidString, "digits": action.digits, "type": action.type ])
         action.fulfill()
     }
     
@@ -1271,7 +1271,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
             action.fail()
             return
         }
-        sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TIMEOUT, self.data?.toJSON())
+        sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_TIMEOUT, self.data?.toJSON())
         if let appDelegate = UIApplication.shared.delegate as? CallkitIncomingAppDelegate {
             appDelegate.onTimeOut(call)
         }
@@ -1311,7 +1311,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
         sendDefaultAudioInterruptionNofificationToStartAudioResource()
         configurAudioSession()
 
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TOGGLE_AUDIO_SESSION, [ "isActivate": true ])
+        self.sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_TOGGLE_AUDIO_SESSION, [ "isActivate": true ])
     }
     
     public func provider(_ provider: CXProvider, didDeactivate audioSession: AVAudioSession) {
@@ -1337,14 +1337,14 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
         }
         self.callManager.removeAllCalls()
         
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TOGGLE_AUDIO_SESSION, [ "isActivate": false ])
+        self.sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_TOGGLE_AUDIO_SESSION, [ "isActivate": false ])
     }
     
     public func sendMuteEvent(_ id: String, _ isMuted: Bool) {
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TOGGLE_MUTE, [ "id": id, "isMuted": isMuted ])
+        self.sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_TOGGLE_MUTE, [ "id": id, "isMuted": isMuted ])
     }
     
     public func sendHoldEvent(_ id: String, _ isOnHold: Bool) {
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_TOGGLE_HOLD, [ "id": id, "isOnHold": isOnHold ])
+        self.sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_TOGGLE_HOLD, [ "id": id, "isOnHold": isOnHold ])
     }
 }
