@@ -208,38 +208,38 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
 //        self.webRTCManager?.delegate = self
 //        
         
-        if self.webRTCManager == nil {
-    let server =        RTCIceServer(
-                urlStrings: ["stun:stun.l.google.com:19302",
-                             "stun:stun1.l.google.com:19302",
-                             "stun:stun2.l.google.com:19302",
-                             "stun:stun3.l.google.com:19302",
-                             "stun:stun4.l.google.com:19302"]
+    //     if self.webRTCManager == nil {
+    // let server =        RTCIceServer(
+    //             urlStrings: ["stun:stun.l.google.com:19302",
+    //                          "stun:stun1.l.google.com:19302",
+    //                          "stun:stun2.l.google.com:19302",
+    //                          "stun:stun3.l.google.com:19302",
+    //                          "stun:stun4.l.google.com:19302"]
     
-            )
-            self.webRTCManager = NativeWebrtcManager(iceServers:[server]) // Create only when needed
-            self.webRTCManager?.delegate = self
-            print("✅ WebRTCManager initialized in init")
-        }
+    //         )
+    //         self.webRTCManager = NativeWebrtcManager(iceServers:[server]) // Create only when needed
+    //         self.webRTCManager?.delegate = self
+    //         print("✅ WebRTCManager initialized in init")
+    //     }
     }
     
     
     public override init() {
         callManager = CallManager()
         super.init()
-                if self.webRTCManager == nil {
-            let server =        RTCIceServer(
-                        urlStrings: ["stun:stun.l.google.com:19302",
-                                     "stun:stun1.l.google.com:19302",
-                                     "stun:stun2.l.google.com:19302",
-                                     "stun:stun3.l.google.com:19302",
-                                     "stun:stun4.l.google.com:19302"]
+            //     if self.webRTCManager == nil {
+            // let server =        RTCIceServer(
+            //             urlStrings: ["stun:stun.l.google.com:19302",
+            //                          "stun:stun1.l.google.com:19302",
+            //                          "stun:stun2.l.google.com:19302",
+            //                          "stun:stun3.l.google.com:19302",
+            //                          "stun:stun4.l.google.com:19302"]
             
-                    )
-                    self.webRTCManager = NativeWebrtcManager(iceServers:[server]) // Create only when needed
-                    self.webRTCManager?.delegate = self
-                    print("✅ WebRTCManager initialized in init")
-                }
+            //         )
+            //         self.webRTCManager = NativeWebrtcManager(iceServers:[server]) // Create only when needed
+            //         self.webRTCManager?.delegate = self
+            //         print("✅ WebRTCManager initialized in init")
+            //     }
         
     }
 
@@ -840,7 +840,36 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
     @objc public func showCallkitIncoming(_ data: CallData, fromPushKit: Bool) {
         self.isFromPushKit = fromPushKit
         if(fromPushKit){
-            self.data = data
+           
+            
+                guard let iceServerString = data.extra["server"] as? String else {
+        print("Failed to get ice servers")
+        return
+    }
+                guard let iceServerData = iceServerString.data(using: .utf8) else {
+        print("Failed to convert string to data")
+        return
+    }
+
+        do {
+        // Decode string into array of dictionaries
+        if let serverDicts = try JSONSerialization.jsonObject(with: iceServerData, options: []) as? [[String: Any]] {
+            let rtcIceServers = serverDicts.compactMap { dict -> RTCIceServer? in
+                guard let urls = dict["urls"] as? [String] else { return nil }
+                let username = dict["username"] as? String
+                let credential = dict["credential"] as? String
+                return RTCIceServer(urlStrings: urls, username: username, credential: credential)
+            }
+
+                        self.webRTCManager?.close()
+            self.webRTCManager = NativeWebrtcManager(iceServers:rtcIceServers)
+            self.webRTCManager?.delegate = self
+             self.data = data
+
+        }
+    } catch {
+        print("Failed to parse ICE server JSON: \(error)")
+    }
         }
         
         var handle: CXHandle?

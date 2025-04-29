@@ -147,7 +147,7 @@ class NativeWebrtcManager: NSObject {
 //            self.peerConnection.removeTrack(sender)
 //        }
         
-        self.peerConnection.close()
+      
         
         // 5. Reset audio session
 //        self.audioQueue.async { [weak self] in
@@ -163,7 +163,8 @@ class NativeWebrtcManager: NSObject {
 //        }
 //        
         // 6. Clear all delegates
-//        self.delegate = nil
+       self.delegate = nil
+         self.peerConnection.close()
       }
 
       
