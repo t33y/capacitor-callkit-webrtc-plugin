@@ -29,7 +29,7 @@ class NativeWebrtcManager: NSObject {
       
       weak var delegate: WebRTCClientDelegate?
       private let peerConnection: RTCPeerConnection
-      private let rtcAudioSession =  RTCAudioSession.sharedInstance()
+    //   private let rtcAudioSession =  RTCAudioSession.sharedInstance()
       private let audioQueue = DispatchQueue(label: "audio")
       private let mediaConstrains = [kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
                                      kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueFalse]
@@ -66,7 +66,7 @@ class NativeWebrtcManager: NSObject {
           self.peerConnection = peerConnection
           super.init()
           self.createMediaSenders()
-         self.configureAudioSession()
+        //  self.configureAudioSession()
           self.peerConnection.delegate = self
       }
       
@@ -220,18 +220,18 @@ class NativeWebrtcManager: NSObject {
           self.remoteVideoTrack?.add(renderer)
       }
       
-      private func configureAudioSession() {
-          self.rtcAudioSession.lockForConfiguration()
-          do {
-              try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord)
-              try self.rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat)
-              RTCAudioSession.sharedInstance().useManualAudio = true
-              RTCAudioSession.sharedInstance().isAudioEnabled = false
-          } catch let error {
-              debugPrint("Error changeing AVAudioSession category: \(error)")
-          }
-          self.rtcAudioSession.unlockForConfiguration()
-      }
+    //   private func configureAudioSession() {
+    //       self.rtcAudioSession.lockForConfiguration()
+    //       do {
+    //           try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord)
+    //           try self.rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat)
+    //           RTCAudioSession.sharedInstance().useManualAudio = true
+    //           RTCAudioSession.sharedInstance().isAudioEnabled = false
+    //       } catch let error {
+    //           debugPrint("Error changeing AVAudioSession category: \(error)")
+    //       }
+    //       self.rtcAudioSession.unlockForConfiguration()
+    //   }
       
       private func createMediaSenders() {
           let streamId = "stream"
@@ -365,41 +365,41 @@ extension NativeWebrtcManager {
     }
     
     // Fallback to the default playing device: headphones/bluetooth/ear speaker
-    func speakerOff() {
-        self.audioQueue.async { [weak self] in
-            guard let self = self else {
-                return
-            }
+    // func speakerOff() {
+    //     self.audioQueue.async { [weak self] in
+    //         guard let self = self else {
+    //             return
+    //         }
             
-            self.rtcAudioSession.lockForConfiguration()
-            do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord)
-                try self.rtcAudioSession.overrideOutputAudioPort(.none)
-            } catch let error {
-                debugPrint("Error setting AVAudioSession category: \(error)")
-            }
-            self.rtcAudioSession.unlockForConfiguration()
-        }
-    }
+    //         self.rtcAudioSession.lockForConfiguration()
+    //         do {
+    //             try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord)
+    //             try self.rtcAudioSession.overrideOutputAudioPort(.none)
+    //         } catch let error {
+    //             debugPrint("Error setting AVAudioSession category: \(error)")
+    //         }
+    //         self.rtcAudioSession.unlockForConfiguration()
+    //     }
+    // }
     
     // Force speaker
-    func speakerOn() {
-        self.audioQueue.async { [weak self] in
-            guard let self = self else {
-                return
-            }
+    // func speakerOn() {
+    //     self.audioQueue.async { [weak self] in
+    //         guard let self = self else {
+    //             return
+    //         }
             
-            self.rtcAudioSession.lockForConfiguration()
-            do {
-                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord)
-                try self.rtcAudioSession.overrideOutputAudioPort(.speaker)
-                try self.rtcAudioSession.setActive(true)
-            } catch let error {
-                debugPrint("Couldn't force audio to speaker: \(error)")
-            }
-            self.rtcAudioSession.unlockForConfiguration()
-        }
-    }
+    //         self.rtcAudioSession.lockForConfiguration()
+    //         do {
+    //             try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord)
+    //             try self.rtcAudioSession.overrideOutputAudioPort(.speaker)
+    //             try self.rtcAudioSession.setActive(true)
+    //         } catch let error {
+    //             debugPrint("Couldn't force audio to speaker: \(error)")
+    //         }
+    //         self.rtcAudioSession.unlockForConfiguration()
+    //     }
+    // }
     
     private func setAudioEnabled(_ isEnabled: Bool) {
         setTrackEnabled(RTCAudioTrack.self, isEnabled: isEnabled)

@@ -1309,6 +1309,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
     
     public func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
 
+
         if let appDelegate = UIApplication.shared.delegate as? CallkitIncomingAppDelegate {
             appDelegate.didActivateAudioSession(audioSession)
         }
