@@ -839,6 +839,8 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
     
     @objc public func showCallkitIncoming(_ data: CallData, fromPushKit: Bool) {
         self.isFromPushKit = fromPushKit
+        print("showing callkit incoming with data \(data)")
+        print("incoming call is from pushkit \(fromPushKit)")
         if(fromPushKit){
            
             
@@ -858,10 +860,13 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
                 guard let urls = dict["urls"] as? [String] else { return nil }
                 let username = dict["username"] as? String
                 let credential = dict["credential"] as? String
+                print("ice server urls \(urls)")
+                print("ice server username \(username ?? "")")
+                print("ice server credential \(credential ?? "")")
                 return RTCIceServer(urlStrings: urls, username: username, credential: credential)
             }
 
-                        self.webRTCManager?.close()
+            self.webRTCManager?.close()
             self.webRTCManager = NativeWebrtcManager(iceServers:rtcIceServers)
             self.webRTCManager?.delegate = self
              self.data = data

@@ -114,7 +114,7 @@ class NativeWebrtcManager: NSObject {
       }
     
     func close()  {
-        
+        print("Closing peer connection")
         // 1. Clean up data channels
         self.localDataChannel?.close()
         self.localDataChannel?.delegate = nil
