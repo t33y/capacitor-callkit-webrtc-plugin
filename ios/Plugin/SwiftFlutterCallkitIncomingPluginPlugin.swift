@@ -865,9 +865,13 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
                 print("ice server credential \(credential ?? "")")
                 return RTCIceServer(urlStrings: urls, username: username, credential: credential)
             }
-
+ print("rtc ice servers \(rtcIceServers)")
+ print("closing existing webrtc manager")
             self.webRTCManager?.close()
+ print("existing webrtc manager closed")
+ print("init webrtc manager")
             self.webRTCManager = NativeWebrtcManager(iceServers:rtcIceServers)
+            print("webrtc manager initialized")
             self.webRTCManager?.delegate = self
              self.data = data
 
@@ -876,10 +880,9 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
         print("Failed to parse ICE server JSON: \(error)")
     }
         }
-        
         var handle: CXHandle?
         handle = CXHandle(type: self.getHandleType(data.handleType), value: data.getEncryptHandle())
-        
+        print("will update call")
         let callUpdate = CXCallUpdate()
         callUpdate.remoteHandle = handle
         callUpdate.supportsDTMF = data.supportsDTMF
@@ -889,6 +892,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
         callUpdate.hasVideo = data.type > 0 ? true : false
         callUpdate.localizedCallerName = data.nameCaller
         
+        print("init callkit provider")
         initCallkitProvider(data)
         
         let uuid = UUID(uuidString: data.uuid)
