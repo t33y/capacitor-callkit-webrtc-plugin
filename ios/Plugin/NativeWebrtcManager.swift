@@ -30,7 +30,7 @@ class NativeWebrtcManager: NSObject {
       weak var delegate: WebRTCClientDelegate?
       private let peerConnection: RTCPeerConnection
     //   private let rtcAudioSession =  RTCAudioSession.sharedInstance()
-      private let audioQueue = DispatchQueue(label: "audio")
+    //   private let audioQueue = DispatchQueue(label: "audio")
       private let mediaConstrains = [kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
                                      kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueFalse]
       private var videoCapturer: RTCVideoCapturer?
