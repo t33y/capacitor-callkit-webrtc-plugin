@@ -1315,8 +1315,8 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
         }
         
         
-            RTCAudioSession.sharedInstance().audioSessionDidActivate(audioSession)
-            RTCAudioSession.sharedInstance().isAudioEnabled = true
+            // RTCAudioSession.sharedInstance().audioSessionDidActivate(audioSession)
+            // RTCAudioSession.sharedInstance().isAudioEnabled = true
         
 
         if(self.answerCall?.hasConnected ?? false){
@@ -1350,8 +1350,8 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
             appDelegate.didDeactivateAudioSession(audioSession)
         }
         
-        RTCAudioSession.sharedInstance().audioSessionDidDeactivate(audioSession)
-        RTCAudioSession.sharedInstance().isAudioEnabled = false
+        // RTCAudioSession.sharedInstance().audioSessionDidDeactivate(audioSession)
+        // RTCAudioSession.sharedInstance().isAudioEnabled = false
         
         if self.outgoingCall?.isOnHold ?? false || self.answerCall?.isOnHold ?? false{
             print("Call is on hold")
