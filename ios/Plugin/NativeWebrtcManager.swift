@@ -56,8 +56,11 @@ class NativeWebrtcManager: NSObject {
           config.continualGatheringPolicy = .gatherContinually
           
           // Define media constraints. DtlsSrtpKeyAgreement is required to be true to be able to connect with web browsers.
-          let constraints = RTCMediaConstraints(mandatoryConstraints: nil,
-                                                optionalConstraints: ["DtlsSrtpKeyAgreement":kRTCMediaConstraintsValueTrue])
+          let constraints = RTCMediaConstraints(mandatoryConstraints:["OfferToReceiveAudio": "false"],
+        //   mandatoryConstraints:nil
+                                                // optionalConstraints: ["DtlsSrtpKeyAgreement":kRTCMediaConstraintsValueTrue]
+                                                optionalConstraints:nil
+                                                )
           
           guard let peerConnection = NativeWebrtcManager.factory.peerConnection(with: config, constraints: constraints, delegate: nil) else {
               fatalError("Could not create new RTCPeerConnection")
