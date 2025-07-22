@@ -29,8 +29,8 @@ class NativeWebrtcManager: NSObject {
       
       weak var delegate: WebRTCClientDelegate?
       private let peerConnection: RTCPeerConnection
-    //   private let rtcAudioSession =  RTCAudioSession.sharedInstance()
-    //   private let audioQueue = DispatchQueue(label: "audio")
+      private let rtcAudioSession =  RTCAudioSession.sharedInstance()
+      private let audioQueue = DispatchQueue(label: "audio")
       private let mediaConstrains = [kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
                                      kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueFalse]
       private var videoCapturer: RTCVideoCapturer?
@@ -47,20 +47,19 @@ class NativeWebrtcManager: NSObject {
       required init(iceServers:[RTCIceServer]) {
           let config = RTCConfiguration()
           config.iceServers = iceServers
-          config.iceCandidatePoolSize = 10
+//          config.iceCandidatePoolSize = 0
           
           // Unified plan is more superior than planB
           config.sdpSemantics = .unifiedPlan
-          
+//          config.iceTransportPolicy = .relay
           // gatherContinually will let WebRTC to listen to any network changes and send any new candidates to the other client
           config.continualGatheringPolicy = .gatherContinually
+          config.bundlePolicy = .maxBundle
+          config.rtcpMuxPolicy = .require
           
           // Define media constraints. DtlsSrtpKeyAgreement is required to be true to be able to connect with web browsers.
-          let constraints = RTCMediaConstraints(mandatoryConstraints:["OfferToReceiveAudio": "false"],
-        //   mandatoryConstraints:nil
-                                                // optionalConstraints: ["DtlsSrtpKeyAgreement":kRTCMediaConstraintsValueTrue]
-                                                optionalConstraints:nil
-                                                )
+          let constraints = RTCMediaConstraints(mandatoryConstraints: nil,
+                                                optionalConstraints: ["DtlsSrtpKeyAgreement":kRTCMediaConstraintsValueTrue])
           
           guard let peerConnection = NativeWebrtcManager.factory.peerConnection(with: config, constraints: constraints, delegate: nil) else {
               fatalError("Could not create new RTCPeerConnection")
@@ -69,7 +68,7 @@ class NativeWebrtcManager: NSObject {
           self.peerConnection = peerConnection
           super.init()
           self.createMediaSenders()
-        //  self.configureAudioSession()
+         self.configureAudioSession()
           self.peerConnection.delegate = self
       }
       
@@ -114,7 +113,7 @@ class NativeWebrtcManager: NSObject {
       }
     
     func close()  {
-        print("Closing peer connection")
+        
         // 1. Clean up data channels
         self.localDataChannel?.close()
         self.localDataChannel?.delegate = nil
@@ -138,6 +137,7 @@ class NativeWebrtcManager: NSObject {
 //        self.remoteVideoTrack = nil
         
         // 4. Clean up peer connection
+    
         self.peerConnection.delegate = nil
         
         // Close all transceivers
@@ -223,18 +223,18 @@ class NativeWebrtcManager: NSObject {
           self.remoteVideoTrack?.add(renderer)
       }
       
-    //   private func configureAudioSession() {
-    //       self.rtcAudioSession.lockForConfiguration()
-    //       do {
-    //           try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord)
-    //           try self.rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat)
-    //           RTCAudioSession.sharedInstance().useManualAudio = true
-    //           RTCAudioSession.sharedInstance().isAudioEnabled = false
-    //       } catch let error {
-    //           debugPrint("Error changeing AVAudioSession category: \(error)")
-    //       }
-    //       self.rtcAudioSession.unlockForConfiguration()
-    //   }
+      private func configureAudioSession() {
+          self.rtcAudioSession.lockForConfiguration()
+          do {
+              try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord)
+              try self.rtcAudioSession.setMode(AVAudioSession.Mode.voiceChat)
+              RTCAudioSession.sharedInstance().useManualAudio = true
+              RTCAudioSession.sharedInstance().isAudioEnabled = false
+          } catch let error {
+              debugPrint("Error changeing AVAudioSession category: \(error)")
+          }
+          self.rtcAudioSession.unlockForConfiguration()
+      }
       
       private func createMediaSenders() {
           let streamId = "stream"
@@ -368,41 +368,41 @@ extension NativeWebrtcManager {
     }
     
     // Fallback to the default playing device: headphones/bluetooth/ear speaker
-    // func speakerOff() {
-    //     self.audioQueue.async { [weak self] in
-    //         guard let self = self else {
-    //             return
-    //         }
+    func speakerOff() {
+        self.audioQueue.async { [weak self] in
+            guard let self = self else {
+                return
+            }
             
-    //         self.rtcAudioSession.lockForConfiguration()
-    //         do {
-    //             try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord)
-    //             try self.rtcAudioSession.overrideOutputAudioPort(.none)
-    //         } catch let error {
-    //             debugPrint("Error setting AVAudioSession category: \(error)")
-    //         }
-    //         self.rtcAudioSession.unlockForConfiguration()
-    //     }
-    // }
+            self.rtcAudioSession.lockForConfiguration()
+            do {
+                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord)
+                try self.rtcAudioSession.overrideOutputAudioPort(.none)
+            } catch let error {
+                debugPrint("Error setting AVAudioSession category: \(error)")
+            }
+            self.rtcAudioSession.unlockForConfiguration()
+        }
+    }
     
     // Force speaker
-    // func speakerOn() {
-    //     self.audioQueue.async { [weak self] in
-    //         guard let self = self else {
-    //             return
-    //         }
+    func speakerOn() {
+        self.audioQueue.async { [weak self] in
+            guard let self = self else {
+                return
+            }
             
-    //         self.rtcAudioSession.lockForConfiguration()
-    //         do {
-    //             try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord)
-    //             try self.rtcAudioSession.overrideOutputAudioPort(.speaker)
-    //             try self.rtcAudioSession.setActive(true)
-    //         } catch let error {
-    //             debugPrint("Couldn't force audio to speaker: \(error)")
-    //         }
-    //         self.rtcAudioSession.unlockForConfiguration()
-    //     }
-    // }
+            self.rtcAudioSession.lockForConfiguration()
+            do {
+                try self.rtcAudioSession.setCategory(AVAudioSession.Category.playAndRecord)
+                try self.rtcAudioSession.overrideOutputAudioPort(.speaker)
+                try self.rtcAudioSession.setActive(true)
+            } catch let error {
+                debugPrint("Couldn't force audio to speaker: \(error)")
+            }
+            self.rtcAudioSession.unlockForConfiguration()
+        }
+    }
     
     private func setAudioEnabled(_ isEnabled: Bool) {
         setTrackEnabled(RTCAudioTrack.self, isEnabled: isEnabled)

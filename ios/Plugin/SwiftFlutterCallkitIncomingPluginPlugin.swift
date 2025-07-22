@@ -153,14 +153,17 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
 
     
     public func sendEvent(_ event: String, _ body: [String : Any]?) {
+        print("sending Event \(event) ")
         if silenceEvents {
             print(event, " silenced")
             return
         } else {
             if (self.bridge != nil) {
+                print("bridge not nil will send event \(event)")
                 self.notifyListeners(event, data: body ?? [:])
             } 
            else {
+            print("bridge nil will not send event \(event)")
                if (event == SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_ACCEPT) {
                    lastAcceptCallEvent = body
                } else if (event == SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_INCOMING) {
@@ -684,10 +687,10 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
             pluginCall.resolve()
             break
         case "startCall":
-//            guard let args = options else {
-//                pluginCall.resolve()
-//                return
-//            }
+           guard let args = options else {
+               pluginCall.resolve()
+               return
+           }
             if let getArgs = options {
                 self.data = CallData(args: getArgs)
                 self.startCall(self.data!, fromPushKit: false)
@@ -839,10 +842,10 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
     
     @objc public func showCallkitIncoming(_ data: CallData, fromPushKit: Bool) {
         self.isFromPushKit = fromPushKit
-        print("showing callkit incoming with data \(data)")
+        print("new showing callkit incoming with data \(data)")
         print("incoming call is from pushkit \(fromPushKit)")
         if(fromPushKit){
-           
+
             
                 guard let iceServerString = data.extra["server"] as? String else {
         print("Failed to get ice servers")
@@ -873,6 +876,7 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
             self.webRTCManager = NativeWebrtcManager(iceServers:rtcIceServers)
             print("webrtc manager initialized")
             self.webRTCManager?.delegate = self
+            print("RTCAudioSession state after activation: \(RTCAudioSession.sharedInstance().isActive)")
              self.data = data
 
         }
@@ -906,6 +910,8 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
                 self.callManager.addCall(call)
                 self.sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_INCOMING, data.toJSON())
                 self.endCallNotExist(data)
+            }else{
+                print("Error reporting incoming call: \(error?.localizedDescription ?? "Unknown error")")
             }
         }
 
@@ -1111,19 +1117,26 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
     func configurAudioSession(){
         if data?.configureAudioSession != false {
             let session = AVAudioSession.sharedInstance()
+            print("configuring audio session \(session.isOtherAudioPlaying)") 
             do{
                 try session.setCategory(AVAudioSession.Category.playAndRecord, options: [
                     .allowBluetoothA2DP,
                     .duckOthers,
                     .allowBluetooth,
                 ])
+                print("audio session category set")
                 
                 try session.setMode(self.getAudioSessionMode(data?.audioSessionMode))
+                print("audio session mode set")
                 try session.setActive(data?.audioSessionActive ?? true)
+                print("audio session active set ")
                 try session.setPreferredSampleRate(data?.audioSessionPreferredSampleRate ?? 44100.0)
+                print("audio session sample rate set")
                 try session.setPreferredIOBufferDuration(data?.audioSessionPreferredIOBufferDuration ?? 0.005)
+                print("audio session buffer duration set")
             }catch{
-                print(error)
+                print("Error configuring audio session: \(error)")
+                // print(error)
             }
         }
     }
@@ -1191,22 +1204,31 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
     
     
     public func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
+        print("answer call action")
         guard let call = self.callManager.callWithUUID(uuid: action.callUUID) else{
             action.fail()
             return
         }
+        print("call with uuid \(call.uuid) found")
+        print("will configure audio session")
         self.configurAudioSession()
+        print("audio session configured")
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1200)) {
             self.configurAudioSession()
+        print("audio session configured 2")
         }
         call.hasConnectDidChange = { [weak self] in
             self?.sharedProvider?.reportOutgoingCall(with: call.uuid, connectedAt: call.connectedData)
         }
         self.answerCall = call
+        print("will report call \(self.data?.toJSON())")
         sendEvent(SwiftFlutterCallkitIncomingPluginPlugin.ACTION_CALL_ACCEPT, self.data?.toJSON())
+        print("sent accept call event")
         if let appDelegate = UIApplication.shared.delegate as? CallkitIncomingAppDelegate {
+            print("will call app delegate on accept")
             appDelegate.onAccept(call, action)
         }else {
+            print("will call action fulfill")
             action.fulfill()
         }
     }
@@ -1324,8 +1346,8 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
         }
         
         
-            // RTCAudioSession.sharedInstance().audioSessionDidActivate(audioSession)
-            // RTCAudioSession.sharedInstance().isAudioEnabled = true
+            RTCAudioSession.sharedInstance().audioSessionDidActivate(audioSession)
+            RTCAudioSession.sharedInstance().isAudioEnabled = true
         
 
         if(self.answerCall?.hasConnected ?? false){
@@ -1359,8 +1381,8 @@ public let identifier = "SwiftFlutterCallkitIncomingPluginPlugin"
             appDelegate.didDeactivateAudioSession(audioSession)
         }
         
-        // RTCAudioSession.sharedInstance().audioSessionDidDeactivate(audioSession)
-        // RTCAudioSession.sharedInstance().isAudioEnabled = false
+        RTCAudioSession.sharedInstance().audioSessionDidDeactivate(audioSession)
+        RTCAudioSession.sharedInstance().isAudioEnabled = false
         
         if self.outgoingCall?.isOnHold ?? false || self.answerCall?.isOnHold ?? false{
             print("Call is on hold")
