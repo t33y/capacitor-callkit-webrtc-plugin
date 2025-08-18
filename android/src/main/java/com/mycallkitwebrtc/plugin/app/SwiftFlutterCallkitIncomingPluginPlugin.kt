@@ -292,7 +292,7 @@ class FlutterCallkitIncomingPlugin : Plugin() {
         }
 
         try {
-            val intent = Intent(Settings.ACTION_MANAGE_SPECIAL_APP_ACCESS).apply {
+            val intent = Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT).apply {
                 data = Uri.parse("package:${ctx.packageName}")
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
@@ -1032,9 +1032,11 @@ class FlutterCallkitIncomingPlugin : Plugin() {
                         }
                     }
                     callkitNotificationManager?.requestNotificationPermission(activity, map)
+                    call.resolve()
                 }
                 "requestFullIntentPermission" -> {
                     callkitNotificationManager?.requestFullIntentPermission(activity)
+                    call.resolve()
                 }
                 // EDIT - clear the incoming notification/ring (after accept/decline/timeout)
                 "hideCallkitIncoming" -> {
