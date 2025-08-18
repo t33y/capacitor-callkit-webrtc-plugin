@@ -5,6 +5,10 @@ import android.content.SharedPreferences
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.app.AppOpsManager
+import android.provider.Settings
+import android.net.Uri
+import android.os.Binder
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -280,6 +284,52 @@ class FlutterCallkitIncomingPlugin : Plugin() {
         }
     }
 
+    @PluginMethod
+    fun openSettings(call: PluginCall) {
+        val ctx = context ?: run {
+            call.reject("Context is null")
+            return
+        }
+
+        try {
+            val intent = Intent(Settings.ACTION_MANAGE_SPECIAL_APP_ACCESS).apply {
+                data = Uri.parse("package:${ctx.packageName}")
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            ctx.startActivity(intent)
+            call.resolve()
+        } catch (e: Exception) {
+            call.reject("Failed to open special app access settings: ${e.message}")
+        }
+    }
+
+    @PluginMethod
+    fun isGranted(call: PluginCall) {
+        val ctx = context ?: run {
+            call.reject("Context is null")
+            return
+        }
+
+        try {
+            val appOps = ctx.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+            val uid = Binder.getCallingUid()
+            val packageName = ctx.packageName
+
+            val op = "android:use_full_screen_intent"
+            val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                appOps.unsafeCheckOpNoThrow(op, uid, packageName)
+            } else {
+                AppOpsManager.MODE_DEFAULT
+            }
+
+            val granted = (mode == AppOpsManager.MODE_ALLOWED)
+            val ret = JSONObject().apply { put("granted", granted) }
+
+            call.resolve(ret)
+        } catch (e: Exception) {
+            call.reject("Failed to check permission: ${e.message}")
+        }
+    }
 
 
    @PluginMethod

@@ -13,6 +13,8 @@ npx cap sync
 
 <docgen-index>
 
+* [`isGranted()`](#isgranted)
+* [`openSettings()`](#opensettings)
 * [`unregisterProximityListener()`](#unregisterproximitylistener)
 * [`toggleSpeaker(...)`](#togglespeaker)
 * [`isSpeakerOn()`](#isspeakeron)
@@ -35,6 +37,26 @@ npx cap sync
 
 <docgen-api>
 <!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
+
+### isGranted()
+
+```typescript
+isGranted() => Promise<{ granted: boolean; }>
+```
+
+**Returns:** <code>Promise&lt;{ granted: boolean; }&gt;</code>
+
+--------------------
+
+
+### openSettings()
+
+```typescript
+openSettings() => Promise<void>
+```
+
+--------------------
+
 
 ### unregisterProximityListener()
 

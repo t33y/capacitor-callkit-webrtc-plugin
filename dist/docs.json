@@ -6,6 +6,26 @@
     "tags": [],
     "methods": [
       {
+        "name": "isGranted",
+        "signature": "() => Promise<{ granted: boolean; }>",
+        "parameters": [],
+        "returns": "Promise<{ granted: boolean; }>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "isgranted"
+      },
+      {
+        "name": "openSettings",
+        "signature": "() => Promise<void>",
+        "parameters": [],
+        "returns": "Promise<void>",
+        "tags": [],
+        "docs": "",
+        "complexTypes": [],
+        "slug": "opensettings"
+      },
+      {
         "name": "unregisterProximityListener",
         "signature": "() => Promise<{ status: string; }>",
         "parameters": [],

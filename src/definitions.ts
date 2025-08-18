@@ -602,6 +602,8 @@ export interface SessionDescription {
 }
 
 export interface FlutterCallkitIncomingPlugin extends PushNotificationsPlugin {
+  isGranted(): Promise<{ granted: boolean }>;
+  openSettings(): Promise<void>;
   unregisterProximityListener(): Promise<{ status: string }>;
   toggleSpeaker({
     useSpeaker,
