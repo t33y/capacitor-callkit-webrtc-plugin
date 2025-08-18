@@ -311,21 +311,17 @@ class FlutterCallkitIncomingPlugin : Plugin() {
         }
 
         try {
-            val appOps = ctx.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
-            val uid = Binder.getCallingUid()
-            val packageName = ctx.packageName
+    val ret = JSObject()
+    val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-            val op = "android:use_full_screen_intent"
-            val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                appOps.unsafeCheckOpNoThrow(op, uid, packageName)
-            } else {
-                AppOpsManager.MODE_DEFAULT
-            }
+    val granted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        notificationManager.canUseFullScreenIntent()
+    } else {
+        true
+    }
 
-            val granted = (mode == AppOpsManager.MODE_ALLOWED)
-            val ret = JSONObject().apply { put("granted", granted) }
-
-            call.resolve(ret)
+    ret.put("granted", granted)  // ✅ safe
+    call.resolve(ret) 
         } catch (e: Exception) {
             call.reject("Failed to check permission: ${e.message}")
         }
