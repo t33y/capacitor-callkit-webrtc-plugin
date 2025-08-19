@@ -290,6 +290,7 @@ class FlutterCallkitIncomingPlugin : Plugin() {
             call.reject("Context is null")
             return
         }
+        if (Build.VERSION.SDK_INT > 33) {
 
         try {
             val intent = Intent(Settings.ACTION_MANAGE_APP_USE_FULL_SCREEN_INTENT).apply {
@@ -300,6 +301,8 @@ class FlutterCallkitIncomingPlugin : Plugin() {
             call.resolve()
         } catch (e: Exception) {
             call.reject("Failed to open special app access settings: ${e.message}")
+        }}else{
+           call.resolve() 
         }
     }
 
