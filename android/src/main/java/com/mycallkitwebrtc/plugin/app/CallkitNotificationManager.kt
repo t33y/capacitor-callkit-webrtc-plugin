@@ -245,9 +245,15 @@ fun showIncomingNotificationFallback(data: Bundle) {
         )
 
         val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID_INCOMING)
-            .setSmallIcon(R.drawable.ic_call)
-            .setContentTitle(data.callerName ?: "Incoming call")
-            .setContentText(data.handle ?: "") // optional, e.g. phone number
+            .setSmallIcon(R.drawable.ic_accept)
+            .setContentTitle( data.getString(
+                    CallkitConstants.EXTRA_CALLKIT_NAME_CALLER,
+                    "Incoming call"
+                ) )
+            .setContentText( data.getString(
+                    CallkitConstants.EXTRA_CALLKIT_HANDLE,
+                    ""
+                )) // optional, e.g. phone number
             .setCategory(NotificationCompat.CATEGORY_CALL)
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -257,18 +263,18 @@ fun showIncomingNotificationFallback(data: Bundle) {
         // Use notificationId instead of hardcoded 1001
         builder.addAction(
             R.drawable.ic_decline, "Decline",
-            getDeclinePendingIntent(notificationId, data.toBundle())
+            getDeclinePendingIntent(notificationId, data)
         )
         builder.addAction(
             R.drawable.ic_accept, "Answer",
-            getAcceptPendingIntent(notificationId, data.toBundle())
+            getAcceptPendingIntent(notificationId, data)
         )
 
-        val notification = builder.build().apply {
-            flags = flags or Notification.FLAG_INSISTENT
-        }
+        val notification = builder.build()
+            notification.flags = Notification.FLAG_INSISTENT
+        
 
-        NotificationManagerCompat.from(requireNotNull(context))
+        NotificationManagerCompat.from(context)
             .notify(notificationId, notification)
 
         Log.i("CallNotification", "Fallback incoming call notification shown")
