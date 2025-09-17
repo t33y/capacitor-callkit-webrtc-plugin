@@ -22,6 +22,7 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.text.TextUtils
+import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import androidx.appcompat.app.AlertDialog
@@ -277,7 +278,7 @@ fun showIncomingNotificationFallback(data: Bundle) {
         NotificationManagerCompat.from(context)
             .notify(notificationId, notification)
 
-        Log.i("CallNotification", "Fallback incoming call notification shown")
+        Log.d("CallNotification", "Fallback incoming call notification shown")
     } catch (e: Exception) {
         Log.e("CallNotification", "Failed to show fallback notification", e)
     }

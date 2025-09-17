@@ -793,7 +793,7 @@ class FlutterCallkitIncomingPlugin : Plugin() {
     } catch (e: Exception) {
         // Prevent crash if FSI or CallStyle fails
         e.printStackTrace()
-        Log.w("CallNotification", "Incoming notification fallback: ${e.message}")
+        Log.d("CallNotification", "Incoming notification fallback: ${e.message}")
    callkitNotificationManager?.showIncomingNotificationFallback(data.toBundle())
     }
        
