@@ -227,6 +227,57 @@ class CallkitNotificationManager(private val context: Context) {
         getNotificationManager().notify(notificationId, notification)
     }
 
+    @SuppressLint("MissingPermission")
+fun showIncomingNotificationFallback(data: Bundle) {
+    try {
+        // Generate notificationId same way as main flow
+        val notificationId =
+            data.getString(CallkitConstants.EXTRA_CALLKIT_ID, "callkit_incoming").hashCode()
+                    createNotificationChanel(
+            data.getString(
+                CallkitConstants.EXTRA_CALLKIT_INCOMING_CALL_NOTIFICATION_CHANNEL_NAME,
+                "Incoming Call"
+            ),
+            data.getString(
+                CallkitConstants.EXTRA_CALLKIT_MISSED_CALL_NOTIFICATION_CHANNEL_NAME,
+                "Missed Call"
+            ),
+        )
+
+        val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID_INCOMING)
+            .setSmallIcon(R.drawable.ic_call)
+            .setContentTitle(data.callerName ?: "Incoming call")
+            .setContentText(data.handle ?: "") // optional, e.g. phone number
+            .setCategory(NotificationCompat.CATEGORY_CALL)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setOngoing(true)
+            .setAutoCancel(false)
+
+        // Use notificationId instead of hardcoded 1001
+        builder.addAction(
+            R.drawable.ic_decline, "Decline",
+            getDeclinePendingIntent(notificationId, data.toBundle())
+        )
+        builder.addAction(
+            R.drawable.ic_accept, "Answer",
+            getAcceptPendingIntent(notificationId, data.toBundle())
+        )
+
+        val notification = builder.build().apply {
+            flags = flags or Notification.FLAG_INSISTENT
+        }
+
+        NotificationManagerCompat.from(requireNotNull(context))
+            .notify(notificationId, notification)
+
+        Log.i("CallNotification", "Fallback incoming call notification shown")
+    } catch (e: Exception) {
+        Log.e("CallNotification", "Failed to show fallback notification", e)
+    }
+}
+
+
     private fun initNotificationViews(remoteViews: RemoteViews, data: Bundle) {
         remoteViews.setTextViewText(
             R.id.tvNameCaller,

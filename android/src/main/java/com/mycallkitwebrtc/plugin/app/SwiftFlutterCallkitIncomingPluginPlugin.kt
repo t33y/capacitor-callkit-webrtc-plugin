@@ -788,7 +788,15 @@ class FlutterCallkitIncomingPlugin : Plugin() {
 
     public fun showIncomingNotification(data: Data) {
         data.from = "notification"
+            try {
         callkitNotificationManager?.showIncomingNotification(data.toBundle())
+    } catch (e: Exception) {
+        // Prevent crash if FSI or CallStyle fails
+        e.printStackTrace()
+        Log.w("CallNotification", "Incoming notification fallback: ${e.message}")
+   callkitNotificationManager?.showIncomingNotificationFallback(data.toBundle())
+    }
+       
         //send BroadcastReceiver
         context?.sendBroadcast(
                 CallkitIncomingBroadcastReceiver.getIntentIncoming(
