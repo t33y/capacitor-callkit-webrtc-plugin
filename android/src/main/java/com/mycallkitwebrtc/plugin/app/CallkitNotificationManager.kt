@@ -58,8 +58,15 @@ class CallkitNotificationManager(private val context: Context) {
     private var targetLoadAvatarDefault = object : Target {
 
         override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+                    try {
+            if (bitmap != null) {
             notificationBuilder.setLargeIcon(bitmap)
             getNotificationManager().notify(notificationId, notificationBuilder.build())
+            }
+        } catch (e: Exception) {
+            Log.e("CallNotification", "Failed to set avatar on notification", e)
+        }
+   
         }
 
         override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
